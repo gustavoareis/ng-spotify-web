@@ -38,8 +38,11 @@ Access and refresh tokens are kept in `sessionStorage`; access tokens are refres
 ## Features
 
 - PKCE login, OAuth state validation, token refresh, and protected routes
-- Spotify profile, playlists, saved albums, and album search
-- Automatic Web Playback SDK connection on the home screen, album/playlist playback, and previous/play-pause/next controls
+- Responsive app shell with home, search, library, album, and playlist routes
+- Search for albums, artists, playlists, and tracks, with pagination
+- Browse saved playlists and albums, and load album/playlist track lists
+- Automatic Web Playback SDK connection, playback device selection, and album/playlist/track playback
+- Playback controls for previous, play/pause, next, shuffle, repeat, seek, and volume
 - HTTP bearer-token interceptor with one retry after an expired-token response
 
 ## Project layout
@@ -48,7 +51,8 @@ Access and refresh tokens are kept in `sessionStorage`; access tokens are refres
 - `src/app/core/spotify`: Spotify API models, service, and HTTP interceptor
 - `src/app/core/player`: Web Playback SDK integration
 - `src/app/core/guards`: route protection
-- `src/app/features`: login and home/library screens
+- `src/app/features`: login, shell, home, search, library, album, and playlist screens
+- `src/app/shared`: reusable UI components such as track lists
 - `src/environments`: public build-time configuration
 
 ## Validation

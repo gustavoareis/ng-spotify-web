@@ -32,12 +32,13 @@ describe('SpotifyApiService', () => {
   });
 
   it('loads the current playlists and saved albums with bounded page sizes', async () => {
-    const playlistsResponse = firstValueFrom(api.getMyPlaylists());
+    const playlistsResponse = firstValueFrom(api.getMyPlaylists(50, 50));
     const albumsResponse = firstValueFrom(api.getSavedAlbums());
     const playlistsRequest = http.expectOne(
       (candidate) =>
         candidate.url === 'https://api.spotify.com/v1/me/playlists' &&
-        candidate.params.get('limit') === '50',
+        candidate.params.get('limit') === '50' &&
+        candidate.params.get('offset') === '50',
     );
     const albumsRequest = http.expectOne(
       (candidate) =>
@@ -54,17 +55,28 @@ describe('SpotifyApiService', () => {
     ]);
   });
 
-  it('encodes an album search and limits the results', async () => {
-    const response = firstValueFrom(api.searchAlbums('Daft Punk', 8));
+  it('searches all supported catalog types with bounded results', async () => {
+    const response = firstValueFrom(api.search('Daft Punk'));
     const request = http.expectOne(
       (candidate) =>
         candidate.url === 'https://api.spotify.com/v1/search' &&
         candidate.params.get('q') === 'Daft Punk' &&
-        candidate.params.get('type') === 'album' &&
-        candidate.params.get('limit') === '8',
+        candidate.params.get('type') === 'album,artist,playlist,track' &&
+        candidate.params.get('limit') === '10' &&
+        candidate.params.get('offset') === '0',
     );
 
-    request.flush({ albums: { items: [], limit: 8, next: null, offset: 0, total: 0 } });
-    await expect(response).resolves.toMatchObject({ albums: { total: 0 } });
+    request.flush({
+      albums: { items: [], limit: 10, next: null, offset: 0, total: 0 },
+      artists: { items: [], limit: 10, next: null, offset: 0, total: 0 },
+      playlists: { items: [], limit: 10, next: null, offset: 0, total: 0 },
+      tracks: { items: [], limit: 10, next: null, offset: 0, total: 0 },
+    });
+    await expect(response).resolves.toMatchObject({
+      albums: { total: 0 },
+      artists: { total: 0 },
+      playlists: { total: 0 },
+      tracks: { total: 0 },
+    });
   });
 });

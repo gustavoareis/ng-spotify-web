@@ -10,6 +10,19 @@ export interface SpotifyArtist {
   uri: string;
 }
 
+export interface SpotifyArtistProfile extends SpotifyArtist {
+  images?: SpotifyImage[];
+  followers?: { total: number };
+  genres?: string[];
+}
+
+export interface SpotifyAlbumSummary {
+  id: string;
+  name: string;
+  uri: string;
+  images: SpotifyImage[];
+}
+
 export interface SpotifyAlbum {
   id: string;
   name: string;
@@ -19,6 +32,35 @@ export interface SpotifyAlbum {
   images: SpotifyImage[];
   release_date: string;
   total_tracks: number;
+  external_urls?: { spotify: string };
+}
+
+export interface SpotifyTrack {
+  id: string | null;
+  name: string;
+  uri: string;
+  type?: 'track';
+  duration_ms: number;
+  artists: SpotifyArtist[];
+  album?: SpotifyAlbumSummary | null;
+  track_number?: number;
+  is_playable?: boolean;
+}
+
+export interface SpotifyEpisode {
+  id: string;
+  name: string;
+  uri: string;
+  type: 'episode';
+  duration_ms: number;
+  images: SpotifyImage[];
+  show: { name: string };
+}
+
+export interface SpotifyPlaylistItem {
+  added_at: string | null;
+  is_local: boolean;
+  item: SpotifyTrack | SpotifyEpisode | null;
 }
 
 export interface SpotifyPlaylist {
@@ -53,4 +95,32 @@ export interface SpotifyPage<T> {
 export interface SpotifySavedAlbum {
   added_at: string;
   album: SpotifyAlbum;
+}
+
+export interface SpotifySearchResponse {
+  albums?: SpotifyPage<SpotifyAlbum>;
+  artists?: SpotifyPage<SpotifyArtistProfile>;
+  playlists?: SpotifyPage<SpotifyPlaylist>;
+  tracks?: SpotifyPage<SpotifyTrack>;
+}
+
+export interface SpotifyDevice {
+  id: string | null;
+  is_active: boolean;
+  is_private_session: boolean;
+  is_restricted: boolean;
+  name: string;
+  type: string;
+  volume_percent: number | null;
+}
+
+export type SpotifyRepeatMode = 'off' | 'context' | 'track';
+
+export interface SpotifyCurrentPlayback {
+  device: SpotifyDevice | null;
+  is_playing: boolean;
+  progress_ms: number | null;
+  repeat_state: SpotifyRepeatMode;
+  shuffle_state: boolean;
+  item: SpotifyTrack | SpotifyEpisode | null;
 }
