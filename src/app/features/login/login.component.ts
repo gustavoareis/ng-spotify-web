@@ -8,14 +8,14 @@ import { AuthService } from '../../core/auth/auth.service';
     <main>
       <h1>Spotify Web Clone</h1>
       <button type="button" (click)="login()">Continue with Spotify</button>
-      @if (errorMessage(); as message) {
+      @if (errorMessage() ?? auth.authError(); as message) {
         <p role="alert">{{ message }}</p>
       }
     </main>
   `,
 })
 export class LoginComponent {
-  private readonly auth = inject(AuthService);
+  protected readonly auth = inject(AuthService);
 
   readonly errorMessage = signal<string | null>(null);
 
