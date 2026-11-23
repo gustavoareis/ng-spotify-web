@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { SpotifyPlayerService } from '../../core/player/spotify-player.service';
@@ -8,7 +8,7 @@ import { SpotifyApiService } from '../../core/spotify/spotify-api.service';
 import { MainLayoutComponent } from './main-layout.component';
 
 describe('MainLayoutComponent', () => {
-  it('connects the playback SDK automatically when the main layout opens', async () => {
+  it('connects the player and routes header searches to the search page', async () => {
     const player = {
       connected: signal(false),
       connecting: signal(false),
@@ -54,5 +54,18 @@ describe('MainLayoutComponent', () => {
 
     expect(player.connect).toHaveBeenCalledOnce();
     expect(player.getAvailableDevices).toHaveBeenCalledOnce();
+
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const input = (fixture.nativeElement as HTMLElement).querySelector(
+      '#global-search',
+    ) as HTMLInputElement;
+    input.value = '  serenity  ';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    const submit = new Event('submit', { bubbles: true, cancelable: true });
+    input.closest('form')?.dispatchEvent(submit);
+
+    expect(submit.defaultPrevented).toBe(true);
+    expect(navigate).toHaveBeenCalledWith(['/search'], { queryParams: { q: 'serenity' } });
   });
 });
